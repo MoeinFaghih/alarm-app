@@ -1,0 +1,37 @@
+﻿@model AlarmApp.Models.User
+@{
+}
+
+@section Styles {
+	<link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+}
+
+
+<form method="post">
+	<div>
+		<span>Email: </span> <input type="text" name="email" />
+	</div>
+	
+	<div>
+		<span>password: </span> <input type="password" name="password" />
+	</div>
+	
+	<button type="submit">Login</button>
+</form>
+
+@if (!ViewData.ModelState.IsValid)
+{
+	<div class="alert alert-danger">
+		@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+	</div>
+}
+
+
+@if(Model != null){
+	<p>@Model.Email</p>
+	<p>@Model.PasswordHash</p>
+	@if (Model.PasswordHash == null)
+	{
+		<h2 style="color:red">The password is null</h2>
+	}
+}

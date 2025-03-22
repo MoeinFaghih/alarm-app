@@ -1,0 +1,178 @@
+﻿@model AlarmApp.Models.AlarmViewModel
+
+@{
+}
+<h1 style="margin-top: 40px; margin-bottom: 100px">Alarm Management System</h1>
+
+@if (!Model.Alarms.Any())
+{
+	<h3 style="color: orangered;">There was a problem connecting to the database!</h3>
+}
+
+
+@*
+@foreach(Alarm alarm in Model.Alarms)
+{
+	
+	<p>The Information for id #@alarm.id</p>
+	<br />
+	<p>Start Date:  @alarm.StartDate</p>
+	<p>End Date:  @(alarm.EndaDate == null ? "Unknown" : @alarm.EndaDate)</p>
+	<p>Set value:  @alarm.SetValue</p>
+	<p>Reset Value:  @(alarm.ResetValue == null ? "Unknown" : alarm.ResetValue)</p>
+	<p>Is the alarm open?   @(alarm.IsOpen ? "open" : "close")</p>
+
+	<p>
+		Alarm Type:
+		@switch (alarm.Type)
+		{
+			case 0:
+				<strong>Temperature</strong>
+				; break;
+			case 1:
+				<strong>Vibration</strong>
+				; break;
+			case 2:
+				<strong>Acoustic</strong>
+				; break;
+			case 3:
+				<strong>Magnetic</strong>
+				; break;
+		}
+
+	</p>
+	<hr />
+	<hr />
+}
+
+
+<p style="text-align: center; font-size: 25px">The number of Open Alarms:   <span style="color: red; margin: 10px;">@Model.OpenCount</span></p>
+<p style="text-align: center; font-size: 25px">The number of Close Alarms:   <span style="color: red; margin: 10px;">@Model.CloseCount</span></p>
+
+*@
+
+<div style="display: flex; width: 1000px; margin: 0 auto; justify-content: space-between">
+	<div id="OpenCloseChart"></div>
+	<div id="TypeDistChart"></div>
+</div>
+
+<div id="grid"></div>
+
+
+@*
+<p style="text-align: center; font-size: 25px">
+	<span style="color: blue; margin: 15px;">Temperature: @Model.DistributionByType[0]</span>
+	<span style="color: blue; margin: 15px;">Vibration: @Model.DistributionByType[1]</span>
+	<span style="color: blue; margin: 15px;">Acoustic: @Model.DistributionByType[2]</span>
+	<span style="color: blue; margin: 15px;">Magnetic: @Model.DistributionByType[3]</span>
+</p>*@
+
+<script>
+	$(function() {
+		var OpenCloseChartData = [
+			{ category: "Open Alarms", count: @Model.OpenCount },
+			{ category: "Closed Alarms", count: @Model.CloseCount }
+		];
+
+		$("#OpenCloseChart").dxPieChart({
+			dataSource: OpenCloseChartData,
+			series: [{
+				argumentField: "category",
+				valueField: "count",
+				label: {
+					visible: true,
+					format: "fixedPoint",
+					connector: {
+						visible: true
+					}
+				}
+			}],
+			title: "Open vs. Closed Alarms",
+			legend: {
+				horizontalAlignment: "center",
+				verticalAlignment: "bottom"
+			},
+			export: {
+				enabled: true
+			}
+		});
+
+		var TypeChartData = [
+			{ category: "Temperature", count: @Model.DistributionByType[0]},
+			{ category: "Vibration", count: @Model.DistributionByType[1]},
+			{ category: "Acoustic", count: @Model.DistributionByType[2]},
+			{ category: "Magnetic", count: @Model.DistributionByType[3]}
+		];
+		$("#TypeDistChart").dxPieChart({
+			dataSource: TypeChartData,
+			series: [{
+				argumentField: "category",
+				valueField: "count",
+				label: {
+					visible: true,
+					format: "fixedPoint",
+					connector: {
+						visible: true
+					}
+				}
+			}],
+			title: "Alarm Type Distribution",
+			legend: {
+				horizontalAlignment: "center",
+				verticalAlignment: "bottom"
+			},
+			export: {
+				enabled: true
+			}
+		});
+
+		console.log(@Html.Raw(Json.Serialize(Model.Alarms)));
+
+
+		$("#grid").dxDataGrid({
+			dataSource: @Html.Raw(Json.Serialize(Model.Alarms)), 
+			columns: [
+				{ dataField: "id", caption: "ID", width: 260 },
+				{ dataField: "startDate", caption: "Start Date", dataType: "date" },
+				{ dataField: "endDate", caption: "End Date", dataType: "date" },
+				{ dataField: "setValue", caption: "Set Value" },
+				{ dataField: "resetValue", caption: "Reset Value" },
+				{
+					dataField: "isOpen", caption: "Status",
+					cellTemplate: function (container, options) {
+						let text = options.value ? "Open" : "Closed";
+						let color = options.value ? "red" : "green";
+						$("<span>").text(text).css("color", color).appendTo(container);
+					}
+				},
+				{
+					dataField: "type", caption: "Alarm Type",
+					lookup: {
+						dataSource: [
+							{ id: 0, name: "Temperature" },
+							{ id: 1, name: "Vibration" },
+							{ id: 2, name: "Acoustic" },
+							{ id: 3, name: "Magnetic" }
+						],
+						valueExpr: "id",
+						displayExpr: "name"
+					}
+				}
+			],
+			showBorders: true,
+			paging: {
+				pageSize: 10
+			},
+			filterRow: {
+				visible: true 
+			},
+			searchPanel: {
+				visible: true 
+			},
+			columnAutoWidth: true
+		});
+
+	});
+</script>
+
+
