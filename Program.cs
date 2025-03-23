@@ -13,6 +13,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 		options.LoginPath = "/User/Login";  
 		options.LogoutPath = "/User/Logout";
 		options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+		options.Cookie.HttpOnly = true;
+		options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+		options.Cookie.SameSite = SameSiteMode.Strict;
 	});
 
 builder.Services.AddSession(); 
