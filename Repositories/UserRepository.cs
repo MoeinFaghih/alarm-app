@@ -8,6 +8,7 @@ namespace AlarmApp.Repositories
 	public class UserRepository
 	{
 		private readonly string _connectionString;
+		private static Dictionary<string, (int Attempts, DateTime LockoutEnd)> _failedLogins = new();
 
 		public UserRepository(string connectionString)
 		{
