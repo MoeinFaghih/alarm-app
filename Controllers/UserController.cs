@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using AlarmApp.Repositories;
+using AlarmApp.Models;
 
 namespace AlarmApp.Controllers
 {
@@ -27,12 +28,22 @@ namespace AlarmApp.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Login(string email, string password)
 		{
-			var user = await _userRepos.GetUserByEmailAsync(email);
-			if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
-			{
-				ModelState.AddModelError("", "Invalid credentials");
+			User? user = null;
+			
+			try{
+				user = await _userRepos.GetUserByEmailAsync(email);
+				if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+				{
+					_userRepos.RegisterFailedAttempt(email) ;
+					ModelState.AddModelError("", "Invalid credentials");
+					return View();
+				}
+			}catch(Exception ex){
+				ModelState.AddModelError("", ex.Message); 
 				return View();
 			}
+
+			_userRepos.resetLockOut(email) ;
 
 			var claims = new List<Claim> {
 			new Claim(ClaimTypes.Name, user.Email),

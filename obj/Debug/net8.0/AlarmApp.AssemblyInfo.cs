@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AlarmApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eb81c39fdb50eed4b8e504f12e82c0a27fd46fb3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3c2db9a631c567fa8701280ef1b548c12e3248f5")]
 [assembly: System.Reflection.AssemblyProductAttribute("AlarmApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AlarmApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
