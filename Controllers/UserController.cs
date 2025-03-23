@@ -42,6 +42,7 @@ namespace AlarmApp.Controllers
 			var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 			var authProperties = new AuthenticationProperties { IsPersistent = true };
 
+			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 			await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
 										  new ClaimsPrincipal(claimsIdentity),
 										  authProperties);
